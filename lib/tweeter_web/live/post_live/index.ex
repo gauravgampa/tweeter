@@ -36,9 +36,12 @@ defmodule TweeterWeb.PostLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     post = Timeline.get_post!(id)
-    {:ok, _} = Timeline.delete_post(post)
 
-    {:noreply, assign(socket, :posts, list_posts())}
+    case Timeline.delete_post(post) do
+      {:ok, _post} -> {:noreply, socket |> put_flash(:info, "Post deleted successfully")}
+      {:error, error} ->
+        {:noreply, socket |> put_flash(:error, "Post delete unsuccessful. Reason: #{error}")}
+    end
   end
 
   @impl true
@@ -48,6 +51,11 @@ defmodule TweeterWeb.PostLive.Index do
 
   @impl true
   def handle_info({:post_updated, post}, socket) do
+    {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
+  end
+
+  @impl true
+  def handle_info({:post_deleted, post}, socket) do
     {:noreply, update(socket, :posts, fn posts -> [post | posts] end)}
   end
 
