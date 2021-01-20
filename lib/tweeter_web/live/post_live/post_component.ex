@@ -4,7 +4,8 @@ defmodule TweeterWeb.PostLive.PostComponent do
   @impl true
   def render(assigns) do
     ~L"""
-      <div id="post-<%= @post.id %>" class="post">
+      <div id="post-<%= @post.id %>"
+           class="post <%= if @post.__meta__.state == :deleted do %>hidden<% end %>">
         <div class="row">
           <div class="column column-10">
             <div class="avatar">

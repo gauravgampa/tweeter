@@ -18,7 +18,7 @@ defmodule Tweeter.Timeline do
 
   """
   def list_posts do
-    Repo.all(Post)
+    Repo.all(from p in Post, order_by: [desc: p.id])
   end
 
   @doc """
@@ -53,6 +53,7 @@ defmodule Tweeter.Timeline do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> broadcast(:post_created)
   end
 
   @doc """
@@ -71,6 +72,7 @@ defmodule Tweeter.Timeline do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
+    |> broadcast(:post_updated)
   end
 
   @doc """
@@ -86,7 +88,9 @@ defmodule Tweeter.Timeline do
 
   """
   def delete_post(%Post{} = post) do
-    Repo.delete(post)
+    post
+    |> Repo.delete()
+    |> broadcast(:post_deleted)
   end
 
   @doc """
@@ -100,5 +104,15 @@ defmodule Tweeter.Timeline do
   """
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
+  end
+
+  def subscribe() do
+    Phoenix.PubSub.subscribe(Tweeter.PubSub, "posts")
+  end
+
+  def broadcast({:error, _reason} = error, _event), do: error
+  def broadcast({:ok, post} = error, event) do
+    Phoenix.PubSub.broadcast(Tweeter.PubSub, "posts", {event, post})
+    {:ok, post}
   end
 end
