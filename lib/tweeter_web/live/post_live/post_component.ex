@@ -1,6 +1,20 @@
 defmodule TweeterWeb.PostLive.PostComponent do
   use TweeterWeb, :live_component
 
+  alias Tweeter.Timeline
+
+  @impl true
+  def handle_event("like", _, socket) do
+    Timeline.inc_likes(socket.assigns.post)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("repost", _, socket) do
+    Timeline.inc_reposts(socket.assigns.post)
+    {:noreply, socket}
+  end
+
   @impl true
   def render(assigns) do
     ~L"""
@@ -20,11 +34,11 @@ defmodule TweeterWeb.PostLive.PostComponent do
         </div>
         <div class="row">
           <div class="column">
-            <a href="#">Like:</a>
+            <a href="#" phx-click="like" phx-target="<%= @myself %>">Like:</a>
             <%= @post.likes_count %>
           </div>
           <div class="column">
-            <a href="#">Repost:</a>
+            <a href="#" phx-click="repost" phx-target="<%= @myself %>">Repost:</a>
             <%= @post.reposts_count %>
           </div>
           <div class="column">
