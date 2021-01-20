@@ -106,6 +106,14 @@ defmodule Tweeter.Timeline do
     Post.changeset(post, attrs)
   end
 
+  def inc_likes(%Post{} = post) do
+    update_post(post, %{likes_count: post.likes_count + 1})
+  end
+
+  def inc_reposts(%Post{} = post) do
+    update_post(post, %{reposts_count: post.reposts_count + 1})
+  end
+
   def subscribe() do
     Phoenix.PubSub.subscribe(Tweeter.PubSub, "posts")
   end
