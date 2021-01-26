@@ -23,6 +23,12 @@
       <div class="column">
         <progress max="100" value="<%= entry.progress %>" />
       </div>
+      <div class="column">
+        <a href="#" phx-click="cancel-photo-upload" phx-value-ref="<%= entry.ref %>"
+           phx-target="<%= @myself %>">
+          Cancel
+        </a>
+      </div>
     </div>
   <% end %>
 

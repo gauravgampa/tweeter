@@ -58,4 +58,9 @@ defmodule TweeterWeb.PostLive.FormComponent do
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
+
+  @impl true
+  def handle_event("cancel-photo-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :photo, ref)}
+  end
 end
