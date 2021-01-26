@@ -4,6 +4,11 @@ defmodule TweeterWeb.PostLive.FormComponent do
   alias Tweeter.Timeline
 
   @impl true
+  def mount(socket) do
+    {:ok, allow_upload(socket, :photo, accept: ~w(.png .jpg .jpeg), max_entries: 2)}
+  end
+
+  @impl true
   def update(%{post: post} = assigns, socket) do
     changeset = Timeline.change_post(post)
 
@@ -23,6 +28,7 @@ defmodule TweeterWeb.PostLive.FormComponent do
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
+  @impl true
   def handle_event("save", %{"post" => post_params}, socket) do
     save_post(socket, socket.assigns.action, post_params)
   end
