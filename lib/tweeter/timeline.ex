@@ -49,10 +49,11 @@ defmodule Tweeter.Timeline do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(attrs \\ %{}) do
-    %Post{}
+  def create_post(%Post{} = post, attrs \\ %{}, after_save \\ &{:ok, &1}) do
+    post
     |> Post.changeset(attrs)
     |> Repo.insert()
+    |> after_save(after_save)
     |> broadcast(:post_created)
   end
 
@@ -68,12 +69,19 @@ defmodule Tweeter.Timeline do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_post(%Post{} = post, attrs) do
+  def update_post(%Post{} = post, attrs,  after_save \\ &{:ok, &1}) do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
+    |> after_save(after_save)
     |> broadcast(:post_updated)
   end
+
+  def after_save({:ok, post}, func) do
+    {:ok, _post} = func.(post)
+  end
+
+  def after_save(error, _func), do: error
 
   @doc """
   Deletes a post.
