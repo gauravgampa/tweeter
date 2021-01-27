@@ -10,5 +10,27 @@
   <%= textarea f, :body %>
   <%= error_tag f, :body %>
 
+  <%= live_file_input @uploads.photo %>
+  <%= for {_ref, msg} <- @uploads.photo.errors do %>
+    <p class="alert alert-danger"><%= humanize(msg) %></p>
+  <% end %>
+
+  <%= for entry <- @uploads.photo.entries do%>
+    <div class="row">
+      <div class="column">
+        <%= live_img_preview entry, height: 80 %>
+      </div>
+      <div class="column">
+        <progress max="100" value="<%= entry.progress %>" />
+      </div>
+      <div class="column">
+        <a href="#" phx-click="cancel-photo-upload" phx-value-ref="<%= entry.ref %>"
+           phx-target="<%= @myself %>">
+          Cancel
+        </a>
+      </div>
+    </div>
+  <% end %>
+
   <%= submit "Save", phx_disable_with: "Saving..." %>
 </form>
