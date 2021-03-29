@@ -15,7 +15,7 @@ defmodule Tweeter.Timeline.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:body, :likes_count, :reposts_count])
+    |> cast(attrs, [:body, :likes_count, :reposts_count, :username])
     |> validate_required([:body])
     |> validate_length(:body, min: 2, max: 250)
   end
